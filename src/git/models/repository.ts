@@ -396,6 +396,12 @@ export class Repository implements Disposable {
 		return remotes !== undefined && remotes.length > 0;
 	}
 
+	async hasConnectedRemotes(): Promise<boolean> {
+		const remotes = await this.getRemotes();
+		const remote = await Container.git.getRemoteWithApiProvider(remotes);
+		return remote?.provider != null;
+	}
+
 	async hasTrackingBranch(): Promise<boolean> {
 		const branch = await this.getBranch();
 		return branch !== undefined && branch.tracking !== undefined;

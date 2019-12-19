@@ -225,7 +225,7 @@ export abstract class GitCommit implements GitReference {
 	@memoize()
 	getShortMessage() {
 		// eslint-disable-next-line no-template-curly-in-string
-		return CommitFormatter.fromTemplate('${message}', this, { truncateMessageAtNewLine: true });
+		return CommitFormatter.fromTemplate('${message}', this, { messageTruncateAtNewLine: true });
 	}
 
 	@memoize()

@@ -127,6 +127,7 @@ export class ViewCommands {
 		commands.registerCommand('gitlens.views.applyChanges', this.applyChanges, this);
 		commands.registerCommand('gitlens.views.highlightChanges', this.highlightChanges, this);
 		commands.registerCommand('gitlens.views.highlightRevisionChanges', this.highlightRevisionChanges, this);
+		commands.registerCommand('gitlens.views.loadDetailsFromRemote', this.loadDetailsFromRemote, this);
 		commands.registerCommand('gitlens.views.restore', this.restore, this);
 		commands.registerCommand('gitlens.views.switchToBranch', this.switch, this);
 		commands.registerCommand('gitlens.views.switchToCommit', this.switch, this);
@@ -381,6 +382,13 @@ export class ViewCommands {
 			node.ref,
 			true
 		));
+	}
+
+	@debug()
+	private loadDetailsFromRemote(node: CommitNode | CommitFileNode) {
+		if (!(node instanceof CommitNode) && !(node instanceof CommitFileNode)) return;
+
+		node.loadDetails();
 	}
 
 	@debug()
@@ -900,7 +908,8 @@ export class ViewCommands {
 			if (file.status === 'A') continue;
 
 			const uri1 = GitUri.fromFile(file, repoPath);
-			const uri2 = file.status === 'R' || file.status === 'C' ? GitUri.fromFile(file, repoPath, ref2, true) : uri1;
+			const uri2 =
+				file.status === 'R' || file.status === 'C' ? GitUri.fromFile(file, repoPath, ref2, true) : uri1;
 
 			diffArgs = {
 				repoPath: repoPath,

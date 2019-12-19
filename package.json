@@ -2651,6 +2651,15 @@
 				"category": "GitLens"
 			},
 			{
+				"command": "gitlens.views.loadDetailsFromRemote",
+				"title": "Load Details from Remote",
+				"category": "GitLens",
+				"icon": {
+					"dark": "images/dark/icon-sync.svg",
+					"light": "images/light/icon-sync.svg"
+				}
+			},
+			{
 				"command": "gitlens.views.restore",
 				"title": "Restore",
 				"category": "GitLens",
@@ -3797,6 +3806,10 @@
 				},
 				{
 					"command": "gitlens.views.highlightRevisionChanges",
+					"when": "false"
+				},
+				{
+					"command": "gitlens.views.loadDetailsFromRemote",
 					"when": "false"
 				},
 				{
@@ -4965,8 +4978,13 @@
 				{
 					"command": "gitlens.copyShaToClipboard",
 					"when": "viewItem =~ /gitlens:commit\\b/",
-					"group": "inline@98",
+					"group": "inline@97",
 					"alt": "gitlens.copyMessageToClipboard"
+				},
+				{
+					"command": "gitlens.views.loadDetailsFromRemote",
+					"when": "viewItem =~ /gitlens:commit\\b(?=.*?\\b\\+details\\b)/ && gitlens:hasConnectedRemotes",
+					"group": "inline@98"
 				},
 				{
 					"command": "gitlens.openCommitInRemote",
@@ -5031,17 +5049,22 @@
 				{
 					"command": "gitlens.revealCommitInView",
 					"when": "viewItem =~ /gitlens:commit\\b/",
-					"group": "3_gitlens_explore@1"
+					"group": "3_gitlens_explore@2"
 				},
 				{
 					"command": "gitlens.showCommitInView",
 					"when": "viewItem =~ /gitlens:commit\\b/",
-					"group": "3_gitlens_explore@2"
+					"group": "3_gitlens_explore@3"
+				},
+				{
+					"command": "gitlens.views.loadDetailsFromRemote",
+					"when": "viewItem =~ /gitlens:commit\\b(?=.*?\\b\\+details\\b)/ && gitlens:hasConnectedRemotes",
+					"group": "5_gitlens_open@1"
 				},
 				{
 					"command": "gitlens.openCommitInRemote",
 					"when": "viewItem =~ /gitlens:commit\\b/ && gitlens:hasRemotes",
-					"group": "5_gitlens_open@1"
+					"group": "5_gitlens_open@2"
 				},
 				{
 					"command": "gitlens.views.terminalPushCommit",
@@ -5088,13 +5111,18 @@
 				{
 					"command": "gitlens.views.openChangesWithWorking",
 					"when": "viewItem =~ /gitlens:file\\b/",
-					"group": "inline@97"
+					"group": "inline@96"
 				},
 				{
 					"command": "gitlens.copyShaToClipboard",
-					"when": "viewItem =~ /gitlens:file\\b(?=.*?\\b\\+committed\\b)\\b/",
-					"group": "inline@98",
+					"when": "viewItem =~ /gitlens:file\\b(?=.*?\\b\\+committed\\b)/",
+					"group": "inline@97",
 					"alt": "gitlens.copyMessageToClipboard"
+				},
+				{
+					"command": "gitlens.views.loadDetailsFromRemote",
+					"when": "viewItem =~ /gitlens:file\\b(?=.*?\\b\\+details\\b)/ && gitlens:hasConnectedRemotes",
+					"group": "inline@98"
 				},
 				{
 					"command": "gitlens.openFileInRemote",
@@ -5168,14 +5196,19 @@
 					"group": "3_gitlens_explore@4"
 				},
 				{
+					"command": "gitlens.views.loadDetailsFromRemote",
+					"when": "viewItem =~ /gitlens:file\\b(?=.*?\\b\\+details\\b)/ && gitlens:hasConnectedRemotes",
+					"group": "5_gitlens_open@1"
+				},
+				{
 					"command": "gitlens.openFileInRemote",
 					"when": "viewItem =~ /gitlens:file\\b/ && gitlens:hasRemotes",
-					"group": "5_gitlens_open@1"
+					"group": "5_gitlens_open@2"
 				},
 				{
 					"command": "gitlens.views.openFileRevisionInRemote",
 					"when": "viewItem =~ /gitlens:file\\b(?=.*?\\b\\+committed\\b)/ && gitlens:hasRemotes",
-					"group": "5_gitlens_open@2"
+					"group": "5_gitlens_open@3"
 				},
 				{
 					"command": "gitlens.copyRemoteFileUrlToClipboard",

@@ -136,7 +136,7 @@ export class StatusBarController implements Disposable {
 		if (!cfg.enabled || this._blameStatusBarItem === undefined || !isTextEditor(editor)) return;
 
 		this._blameStatusBarItem.text = `$(git-commit) ${CommitFormatter.fromTemplate(cfg.format, commit, {
-			truncateMessageAtNewLine: true,
+			messageTruncateAtNewLine: true,
 			dateFormat: cfg.dateFormat === null ? Container.config.defaultDateFormat : cfg.dateFormat
 		})}`;
 

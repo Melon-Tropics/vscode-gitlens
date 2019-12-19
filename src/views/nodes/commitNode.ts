@@ -5,8 +5,8 @@ import { Commands, DiffWithPreviousCommandArgs } from '../../commands';
 import { ViewFilesLayout } from '../../configuration';
 import { GlyphChars } from '../../constants';
 import { Container } from '../../container';
-import { CommitFormatter, GitBranch, GitLogCommit } from '../../git/gitService';
-import { Arrays, Iterables, Strings } from '../../system';
+import { CommitFormatter, GitBranch, GitLogCommit, GitRemote, Issue, PullRequest } from '../../git/gitService';
+import { Arrays, Iterables, Promises, Strings } from '../../system';
 import { ViewWithFiles } from '../viewBase';
 import { CommitFileNode } from './commitFileNode';
 import { FileNode, FolderNode } from './folderNode';
@@ -30,6 +30,30 @@ export class CommitNode extends ViewRefNode<ViewWithFiles> {
 
 	get ref(): string {
 		return this.commit.sha;
+	}
+
+	private get tooltip() {
+		return CommitFormatter.fromTemplate(
+			this.commit.isUncommitted
+				? `\${author} ${GlyphChars.Dash} \${id}\n\${ago} (\${date})`
+				: `\${author}\${ (email)}\${" via "pullRequest} ${
+						GlyphChars.Dash
+				  } \${id}\${ (tips)}\n\${ago} (\${date})\${\n\nmessage}${this.commit.getFormattedDiffStatus({
+						expand: true,
+						prefix: '\n\n',
+						separator: '\n'
+				  })}\${\n\n${GlyphChars.Dash.repeat(2)}\nfootnotes}`,
+			this.commit,
+			{
+				autolinkedIssues: this._details?.autolinkedIssues,
+				dateFormat: Container.config.defaultDateFormat,
+				getBranchAndTagTips: this.getBranchAndTagTips,
+				messageAutolinks: true,
+				messageIndent: 4,
+				pullRequestOrRemote: this._details?.pr,
+				remotes: this._details?.remotes
+			}
+		);
 	}
 
 	getChildren(): ViewNode[] {
@@ -60,19 +84,24 @@ export class CommitNode extends ViewRefNode<ViewWithFiles> {
 		const label = CommitFormatter.fromTemplate(this.view.config.commitFormat, this.commit, {
 			dateFormat: Container.config.defaultDateFormat,
 			getBranchAndTagTips: this.getBranchAndTagTips,
-			truncateMessageAtNewLine: true
+			messageTruncateAtNewLine: true
 		});
 
 		const item = new TreeItem(
 			label,
 			this._options.expand ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.Collapsed
 		);
-		item.contextValue = ResourceType.Commit;
-		if (this.branch !== undefined && this.branch.current) {
-			item.contextValue += '+current';
-		}
+
+		item.contextValue = `${ResourceType.Commit}${this.branch?.current ? '+current' : ''}${
+			this._details == null
+				? '+details'
+				: `${this._details?.autolinkedIssues != null ? '+autolinks' : ''}${
+						this._details?.pr != null ? '+pr' : ''
+				  }`
+		}`;
+
 		item.description = CommitFormatter.fromTemplate(this.view.config.commitDescriptionFormat, this.commit, {
-			truncateMessageAtNewLine: true,
+			messageTruncateAtNewLine: true,
 			dateFormat: Container.config.defaultDateFormat
 		});
 
@@ -85,24 +114,7 @@ export class CommitNode extends ViewRefNode<ViewWithFiles> {
 			};
 		}
 
-		item.tooltip = CommitFormatter.fromTemplate(
-			this.commit.isUncommitted
-				? `\${author} ${GlyphChars.Dash} \${id}\n\${ago} (\${date})`
-				: `\${author} \${(email) }${GlyphChars.Dash} \${id}\${ (tips)}\n\${ago} (\${date})\n\n\${message}`,
-			this.commit,
-			{
-				dateFormat: Container.config.defaultDateFormat,
-				getBranchAndTagTips: this.getBranchAndTagTips
-			}
-		);
-
-		if (!this.commit.isUncommitted) {
-			item.tooltip += this.commit.getFormattedDiffStatus({
-				expand: true,
-				prefix: '\n\n',
-				separator: '\n'
-			});
-		}
+		item.tooltip = this.tooltip;
 
 		return item;
 	}
@@ -121,5 +133,38 @@ export class CommitNode extends ViewRefNode<ViewWithFiles> {
 			command: Commands.DiffWithPrevious,
 			arguments: [this.uri, commandArgs]
 		};
+	}
+
+	private _details:
+		| {
+				autolinkedIssues: Map<number, Issue | Promises.CancellationError | undefined> | undefined;
+				pr: PullRequest | undefined;
+				remotes: GitRemote[];
+		  }
+		| undefined = undefined;
+
+	async loadDetails() {
+		if (this._details != null) return;
+
+		const remotes = await Container.git.getRemotes(this.commit.repoPath);
+		const remote = await Container.git.getRemoteWithApiProvider(remotes);
+		if (remote?.provider == null) return;
+
+		const [autolinkedIssues, pr] = await Promise.all([
+			Container.autolinks.getIssueLinks(this.commit.message, remote.provider),
+			Container.git.getPullRequestForCommit(this.commit.ref, remote.provider)
+		]);
+
+		this._details = {
+			autolinkedIssues: autolinkedIssues,
+			pr: pr,
+			remotes: remotes
+		};
+
+		// TODO:
+		// Add autolinks action to open a quickpick to pick the autolink
+		// Add pr action to open the pr
+
+		this.triggerChange();
 	}
 }

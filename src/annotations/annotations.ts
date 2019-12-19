@@ -171,7 +171,7 @@ export class Annotations {
 		const message = CommitFormatter.fromTemplate(format, commit, {
 			...formatOptions,
 			// previousLineDiffUris: diffUris,
-			truncateMessageAtNewLine: true
+			messageTruncateAtNewLine: true
 		});
 
 		return {
