@@ -27,6 +27,7 @@ export * from './commands/openFileInRemote';
 export * from './commands/openFileRevision';
 export * from './commands/openFileRevisionFrom';
 export * from './commands/openInRemote';
+export * from './commands/openPullRequest';
 export * from './commands/openRepoInRemote';
 export * from './commands/openRevisionFile';
 export * from './commands/openWorkingFile';

@@ -2469,6 +2469,15 @@
 				}
 			},
 			{
+				"command": "gitlens.openPullRequestOnRemote",
+				"title": "Open Associated Pull Request",
+				"category": "GitLens",
+				"icon": {
+					"dark": "images/dark/icon-pull-request.svg",
+					"light": "images/light/icon-pull-request.svg"
+				}
+			},
+			{
 				"command": "gitlens.openFileInRemote",
 				"title": "Open File on Remote",
 				"category": "GitLens",
@@ -3722,6 +3731,10 @@
 				},
 				{
 					"command": "gitlens.openCommitInRemote",
+					"when": "gitlens:activeFileStatus =~ /blameable/ && gitlens:activeFileStatus =~ /remotes/"
+				},
+				{
+					"command": "gitlens.openPullRequestOnRemote",
 					"when": "gitlens:activeFileStatus =~ /blameable/ && gitlens:activeFileStatus =~ /remotes/"
 				},
 				{
@@ -4987,6 +5000,11 @@
 					"group": "inline@98"
 				},
 				{
+					"command": "gitlens.openPullRequestOnRemote",
+					"when": "viewItem =~ /gitlens:commit\\b(?=.*?\\b\\+pr\\b)/",
+					"group": "inline@98"
+				},
+				{
 					"command": "gitlens.openCommitInRemote",
 					"when": "viewItem =~ /gitlens:commit\\b/ && gitlens:hasRemotes",
 					"group": "inline@99"
@@ -5062,6 +5080,11 @@
 					"group": "5_gitlens_open@1"
 				},
 				{
+					"command": "gitlens.openPullRequestOnRemote",
+					"when": "viewItem =~ /gitlens:commit\\b(?=.*?\\b\\+pr\\b)/",
+					"group": "5_gitlens_open@1"
+				},
+				{
 					"command": "gitlens.openCommitInRemote",
 					"when": "viewItem =~ /gitlens:commit\\b/ && gitlens:hasRemotes",
 					"group": "5_gitlens_open@2"
@@ -5122,6 +5145,11 @@
 				{
 					"command": "gitlens.views.loadDetailsFromRemote",
 					"when": "viewItem =~ /gitlens:file\\b(?=.*?\\b\\+details\\b)/ && gitlens:hasConnectedRemotes",
+					"group": "inline@98"
+				},
+				{
+					"command": "gitlens.openPullRequestOnRemote",
+					"when": "viewItem =~ /gitlens:file\\b(?=.*?\\b\\+pr\\b)/",
 					"group": "inline@98"
 				},
 				{
@@ -5198,6 +5226,11 @@
 				{
 					"command": "gitlens.views.loadDetailsFromRemote",
 					"when": "viewItem =~ /gitlens:file\\b(?=.*?\\b\\+details\\b)/ && gitlens:hasConnectedRemotes",
+					"group": "5_gitlens_open@1"
+				},
+				{
+					"command": "gitlens.openPullRequestOnRemote",
+					"when": "viewItem =~ /gitlens:file\\b(?=.*?\\b\\+pr\\b)/",
 					"group": "5_gitlens_open@1"
 				},
 				{

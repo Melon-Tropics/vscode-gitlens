@@ -67,6 +67,7 @@ export enum Commands {
 	// DEPRECATED
 	OpenFileRevisionFromBranch = 'gitlens.openFileRevisionFromBranch',
 	OpenInRemote = 'gitlens.openInRemote',
+	OpenPullRequestOnRemote = 'gitlens.openPullRequestOnRemote',
 	OpenRepoInRemote = 'gitlens.openRepoInRemote',
 	OpenRevisionFile = 'gitlens.openRevisionFile',
 	OpenRevisionFileInDiffRight = 'gitlens.openRevisionFileInDiffRight',
